@@ -10,8 +10,20 @@ export default function App() {
   const [location, setLocation] = useState();
   const [ok, setOk] = useState(true);
   const ask = async () => {
-    const permisson = await Location.requestForegroundPermissionsAsync();
-    console.log(permisson);
+    //위치정보 동의 받기
+    const { granted } = await Location.requestForegroundPermissionsAsync();
+    if (!granted) {
+      setOk(false);
+    }
+    //user의 위치 받기
+    const {
+      coords: { latitude, longitude },
+    } = await Location.getCurrentPositionAsync({ accuracy: 5 });
+    const location = await Location.reverseGeocodeAsync(
+      { latitude, longitude },
+      { useGoogleMaps: false }
+    );
+    console.log(location);
   };
   useEffect(() => {
     ask();
